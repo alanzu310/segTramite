@@ -1,0 +1,12 @@
+<%- include('partials/header', { titulo: 'Ingresar' }) %>
+<div class="card angosta">
+  <h1>Iniciar sesión</h1>
+  <form method="post" action="/login">
+    <label>Correo electrónico <input type="email" name="email" value="<%= email %>" required autofocus></label>
+    <label>Contraseña <input type="password" name="password" required></label>
+    <button type="submit">Ingresar</button>
+  </form>
+  <p class="muted">¿No tiene cuenta? <a href="/registro">Registrarse como solicitante</a></p>
+  <p class="muted">¿Solo quiere ver el estado? <a href="/consulta">Consultar por código</a></p>
+</div>
+<%- include('partials/footer') %>

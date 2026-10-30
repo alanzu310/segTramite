@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= typeof titulo !== 'undefined' ? titulo + ' · ' : '' %>SegTrámite</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="marca" href="/">SegTrámite</a>
+  <nav>
+    <a href="/consulta">Consultar</a>
+    <% if (user) { %>
+      <a href="/tramites"><%= user.rol === 'usuario' ? 'Mis trámites' : 'Bandeja' %></a>
+      <% if (user.rol === 'usuario') { %><a href="/tramites/nuevo">Nuevo trámite</a><% } %>
+      <span class="quien">
+        <%= user.nombre %>
+        <span class="rol rol-<%= user.rol %>"><%= user.rol %></span>
+        <% if (user.departamento_nombre) { %><small><%= user.departamento_nombre %></small><% } %>
+      </span>
+      <form method="post" action="/logout" class="inline"><button class="link">Salir</button></form>
+    <% } else { %>
+      <a href="/login">Ingresar</a>
+    <% } %>
+  </nav>
+</header>
+<main>
+<% if (flash) { %>
+  <div class="flash flash-<%= flash.tipo %>"><%= flash.texto %></div>
+<% } %>

@@ -1,0 +1,10 @@
+<ol class="timeline">
+  <% historial.forEach(function (m, i) { %>
+    <li class="<%= i === historial.length - 1 ? 'actual' : '' %>">
+      <strong><%= m.hacia_nombre %></strong>
+      <span class="fecha"><%= m.fecha %></span>
+      <% if (m.desde_nombre) { %><div class="muted">Derivado desde <%= m.desde_nombre %><%= m.usuario_nombre ? ' por ' + m.usuario_nombre : '' %></div><% } %>
+      <% if (m.comentario) { %><div><%= m.comentario %></div><% } %>
+    </li>
+  <% }) %>
+</ol>

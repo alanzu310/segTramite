@@ -1,0 +1,24 @@
+<%- include('partials/header', { titulo: 'Consulta' }) %>
+<div class="card">
+  <h1>Consultar estado de un trámite</h1>
+  <form method="get" action="/consulta" class="fila">
+    <input name="codigo" placeholder="Ej: TRM-2026-0001" value="<%= codigo %>" required>
+    <button type="submit">Buscar</button>
+  </form>
+</div>
+<% if (codigo && !tramite) { %>
+  <div class="flash flash-error">No se encontró ningún trámite con el código <%= codigo %>.</div>
+<% } %>
+<% if (tramite) { %>
+  <div class="card">
+    <h2><%= tramite.codigo %> — <%= tramite.titulo %></h2>
+    <div class="datos">
+      <div><span class="muted">Se encuentra en</span><strong><%= tramite.departamento_nombre %></strong></div>
+      <div><span class="muted">Estado</span><%- include('partials/estado', { estado: tramite.estado }) %></div>
+      <div><span class="muted">Última actualización</span><%= tramite.actualizado_en %></div>
+    </div>
+    <h3>Recorrido</h3>
+    <%- include('partials/historial', { historial }) %>
+  </div>
+<% } %>
+<%- include('partials/footer') %>

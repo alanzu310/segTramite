@@ -1,0 +1,12 @@
+<%- include('partials/header', { titulo: 'Registro' }) %>
+<div class="card angosta">
+  <h1>Crear cuenta</h1>
+  <form method="post" action="/registro">
+    <label>Nombre completo <input name="nombre" value="<%= datos.nombre || '' %>" required></label>
+    <label>Correo electrónico <input type="email" name="email" value="<%= datos.email || '' %>" required></label>
+    <label>Contraseña <input type="password" name="password" minlength="6" required></label>
+    <button type="submit">Registrarse</button>
+  </form>
+  <p class="muted">¿Ya tiene cuenta? <a href="/login">Ingresar</a></p>
+</div>
+<%- include('partials/footer') %>

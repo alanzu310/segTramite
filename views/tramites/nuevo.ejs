@@ -1,0 +1,11 @@
+<%- include('../partials/header', { titulo: 'Nuevo trámite' }) %>
+<div class="card">
+  <h1>Nuevo trámite</h1>
+  <form method="post" action="/tramites">
+    <label>Título / asunto <input name="titulo" value="<%= datos.titulo || '' %>" required></label>
+    <label>Descripción <textarea name="descripcion" rows="5"><%= datos.descripcion || '' %></textarea></label>
+    <button type="submit">Registrar trámite</button>
+  </form>
+  <p class="muted">El trámite ingresará por Mesa de Entrada y recibirá un código para su seguimiento.</p>
+</div>
+<%- include('../partials/footer') %>
