@@ -3,9 +3,11 @@
 Aplicación web para el seguimiento de trámites: permite ver en qué departamento se encuentra
 un trámite y que el personal de cada departamento agregue informes, recomendaciones y observaciones.
 
-**Stack:** Node.js + Express 5, plantillas EJS, SQLite (better-sqlite3), sesiones con `express-session` y contraseñas con `bcryptjs`.
+**Stack:** Node.js + Express 5, plantillas EJS, SQLite (módulo `node:sqlite` incluido en Node, sin compilación), sesiones con `express-session` y contraseñas con `bcryptjs`.
 
 ## Cómo ejecutar
+
+Requiere Node.js 22.13 o superior.
 
 ```bash
 npm install

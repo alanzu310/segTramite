@@ -1,11 +1,24 @@
 const path = require('path');
-const Database = require('better-sqlite3');
+const { DatabaseSync } = require('node:sqlite');
 
 const DB_PATH = process.env.DB_PATH || path.join(__dirname, '..', 'data', 'segtramite.db');
 
-const db = new Database(DB_PATH);
-db.pragma('journal_mode = WAL');
-db.pragma('foreign_keys = ON');
+const db = new DatabaseSync(DB_PATH);
+db.exec('PRAGMA journal_mode = WAL');
+db.exec('PRAGMA foreign_keys = ON');
+
+// Envuelve fn en una transacción: si lanza un error se revierte todo.
+db.transaction = (fn) => (...args) => {
+  db.exec('BEGIN');
+  try {
+    const resultado = fn(...args);
+    db.exec('COMMIT');
+    return resultado;
+  } catch (err) {
+    db.exec('ROLLBACK');
+    throw err;
+  }
+};
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS departamentos (
