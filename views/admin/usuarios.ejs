@@ -1,0 +1,33 @@
+<%- include('../partials/header', { titulo: 'Usuarios' }) %>
+<div class="encabezado">
+  <h1>Usuarios</h1>
+  <a class="boton" href="/admin/usuarios/nuevo">+ Nuevo usuario</a>
+</div>
+<form method="get" class="card fila filtros">
+  <select name="rol">
+    <option value="">Todos los roles</option>
+    <% Object.keys(ROLES).forEach(function (k) { %><option value="<%= k %>" <%= filtro.rol === k ? 'selected' : '' %>><%= ROLES[k] %></option><% }) %>
+  </select>
+  <select name="dep">
+    <option value="">Todas las dependencias</option>
+    <% dependencias.forEach(function (d) { %><option value="<%= d.id %>" <%= String(d.id) === filtro.dep ? 'selected' : '' %>><%= d.nombre %></option><% }) %>
+  </select>
+  <button type="submit">Filtrar</button>
+</form>
+<table class="tabla">
+  <thead><tr><th>Nombre</th><th>Correo</th><th>Rol</th><th>Dependencia</th><th>Estado</th><th></th></tr></thead>
+  <tbody>
+    <% usuarios.forEach(function (u) { %>
+      <tr class="<%= u.activo ? '' : 'inactivo' %>">
+        <td><%= u.nombre %><% if (u.cedula) { %><div class="muted"><%= u.cedula %></div><% } %></td>
+        <td><%= u.email %></td>
+        <td><span class="rol-tabla rol-<%= u.rol %>"><%= ROLES[u.rol] %></span></td>
+        <td><%= u.departamento_nombre || '—' %></td>
+        <td><%= u.activo ? 'Activo' : 'Inactivo' %></td>
+        <td><a href="/admin/usuarios/<%= u.id %>">Editar</a></td>
+      </tr>
+    <% }) %>
+    <% if (!usuarios.length) { %><tr><td colspan="6" class="muted">No hay usuarios con esos filtros.</td></tr><% } %>
+  </tbody>
+</table>
+<%- include('../partials/footer') %>

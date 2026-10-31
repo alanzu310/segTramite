@@ -1,0 +1,47 @@
+<%
+  var faltantes = requisitos.filter(function (r) { return !r.cumplido && !r.no_aplica; });
+%>
+<div class="card" id="requisitos">
+  <h2>Requisitos <span class="muted">(<%= requisitos.length - faltantes.length %> de <%= requisitos.length %>)</span></h2>
+  <% if (faltantes.length) { %>
+    <div class="alerta-requisitos">
+      <strong>Faltan <%= faltantes.length %> requisito(s)</strong>
+      <ul><% faltantes.forEach(function (r) { %><li><%= r.nombre %></li><% }) %></ul>
+    </div>
+  <% } %>
+  <ol class="requisitos">
+    <% requisitos.forEach(function (r) { %>
+      <li class="requisito <%= r.cumplido ? 'cumplido' : (r.no_aplica ? 'no-aplica' : 'falta') %>">
+        <div class="req-titulo">
+          <span class="icono"><%= r.cumplido ? '✔' : (r.no_aplica ? '—' : '✖') %></span>
+          <strong><%= r.nombre %></strong>
+          <% if (r.no_aplica) { %><span class="etiqueta">No aplica</span><% } %>
+          <% if (r.tipo === 'declaracion' && r.cumplido) { %><span class="etiqueta">Declarado</span><% } %>
+        </div>
+        <% if (r.documentos.length) { %>
+          <ul class="docs">
+            <% r.documentos.forEach(function (d) { %>
+              <li><a href="/documentos/<%= d.id %>" target="_blank"><%= d.nombre_original %></a>
+                <span class="muted">(<%= Math.ceil(d.tamano / 1024) %> KB, <%= d.fecha %>)</span></li>
+            <% }) %>
+          </ul>
+        <% } %>
+        <% if (puedeCompletar) { %>
+          <form method="post" action="/tramites/<%= tramite.id %>/requisitos/<%= r.id %>" enctype="multipart/form-data" class="req-acciones">
+            <% if (r.tipo === 'documento') { %>
+              <input type="file" name="archivo" accept=".pdf,image/jpeg,image/png,image/webp" multiple>
+              <button type="submit" class="secundario"><%= r.documentos.length ? 'Agregar archivo' : 'Subir' %></button>
+            <% } else if (!r.cumplido) { %>
+              <button type="submit" name="accion" value="declarar" class="secundario">Declaro que cumplo</button>
+            <% } %>
+            <% if (r.condicional && !r.cumplido && !r.no_aplica) { %>
+              <button type="submit" name="accion" value="no_aplica" class="link" formnovalidate>No aplica a mi caso</button>
+            <% } else if (r.no_aplica) { %>
+              <button type="submit" name="accion" value="aplica" class="link">Sí aplica</button>
+            <% } %>
+          </form>
+        <% } %>
+      </li>
+    <% }) %>
+  </ol>
+</div>

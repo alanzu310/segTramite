@@ -12,8 +12,16 @@
   <nav>
     <a href="/consulta">Consultar</a>
     <% if (user) { %>
-      <a href="/tramites"><%= user.rol === 'usuario' ? 'Mis trámites' : 'Bandeja' %></a>
-      <% if (user.rol === 'usuario') { %><a href="/tramites/nuevo">Nuevo trámite</a><% } %>
+      <% if (user.rol === 'usuario') { %>
+        <a href="/tramites">Mis trámites</a>
+        <a href="/tramites/nuevo">Nuevo trámite</a>
+      <% } else if (user.rol === 'admin') { %>
+        <a href="/tramites">Trámites</a>
+        <a href="/admin/usuarios">Usuarios</a>
+        <a href="/admin/dependencias">Dependencias</a>
+      <% } else { %>
+        <a href="/tramites">Bandeja</a>
+      <% } %>
       <span class="quien">
         <%= user.nombre %>
         <span class="rol rol-<%= user.rol %>"><%= user.rol %></span>

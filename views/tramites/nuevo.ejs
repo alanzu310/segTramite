@@ -1,11 +1,73 @@
-<%- include('../partials/header', { titulo: 'Nuevo trámite' }) %>
-<div class="card">
-  <h1>Nuevo trámite</h1>
-  <form method="post" action="/tramites">
-    <label>Título / asunto <input name="titulo" value="<%= datos.titulo || '' %>" required></label>
-    <label>Descripción <textarea name="descripcion" rows="5"><%= datos.descripcion || '' %></textarea></label>
-    <button type="submit">Registrar trámite</button>
-  </form>
-  <p class="muted">El trámite ingresará por Mesa de Entrada y recibirá un código para su seguimiento.</p>
-</div>
+<%- include('../partials/header', { titulo: tipo.nombre }) %>
+<p><a href="/tramites/nuevo">← Elegir otro trámite</a></p>
+<form method="post" action="/tramites" enctype="multipart/form-data" id="form-tramite">
+  <input type="hidden" name="tipo" value="<%= tipo.clave %>">
+
+  <div class="card">
+    <h1><%= tipo.nombre %></h1>
+    <p class="muted"><%= tipo.descripcion %></p>
+
+    <% if (tipo.clave === 'legalizacion') { %>
+      <h2>Datos del predio</h2>
+      <div class="grid-campos">
+        <label>Sector / barrio * <input name="sector" value="<%= datos.sector || '' %>" required></label>
+        <label>Manzana <input name="manzana" value="<%= datos.manzana || '' %>"></label>
+        <label>Solar <input name="solar" value="<%= datos.solar || '' %>"></label>
+        <label>Área aproximada (m²) <input name="area" type="number" min="0" step="0.01" value="<%= datos.area || '' %>"></label>
+        <label>Años de posesión <input name="anios_posesion" type="number" min="0" value="<%= datos.anios_posesion || '' %>"></label>
+        <label>¿Existe edificación en el predio?
+          <select name="edificacion">
+            <option value="">Seleccione…</option>
+            <option value="Sí" <%= datos.edificacion === 'Sí' ? 'selected' : '' %>>Sí</option>
+            <option value="No" <%= datos.edificacion === 'No' ? 'selected' : '' %>>No (solar vacío)</option>
+          </select>
+        </label>
+      </div>
+      <p class="muted nota">La legalización procede para posesiones pacíficas, públicas y continuas de al menos 5 años (Art. 17).
+        Con menos tiempo solo se tramita de forma excepcional si existe una edificación consolidada.</p>
+      <label>Observaciones <textarea name="descripcion" rows="3"><%= datos.descripcion || '' %></textarea></label>
+    <% } else { %>
+      <label>Asunto * <input name="titulo" value="<%= datos.titulo || '' %>" required></label>
+      <label>Descripción <textarea name="descripcion" rows="5"><%= datos.descripcion || '' %></textarea></label>
+    <% } %>
+  </div>
+
+  <% if (requisitos.length) { %>
+    <div class="card">
+      <h2>Requisitos</h2>
+      <p class="muted">Formatos aceptados: PDF, JPG, PNG o WEBP (máx. 10 MB por archivo). Puede enviar el trámite aunque falten requisitos y subirlos después.</p>
+      <ol class="requisitos">
+        <% requisitos.forEach(function (r) { %>
+          <li class="requisito" data-requisito data-nombre="<%= r.nombre %>">
+            <div class="req-titulo">
+              <strong><%= r.nombre %></strong>
+              <% if (r.condicional) { %><span class="etiqueta">Si aplica</span><% } %>
+            </div>
+            <% if (r.ayuda) { %><div class="muted"><%= r.ayuda %></div><% } %>
+            <div class="req-acciones">
+              <% if (r.tipo === 'declaracion') { %>
+                <label class="check"><input type="checkbox" name="decl_<%= r.id %>" data-cumple> Declaro que cumplo este requisito</label>
+              <% } else { %>
+                <input type="file" name="req_<%= r.id %>" accept=".pdf,image/jpeg,image/png,image/webp" multiple data-cumple>
+              <% } %>
+              <% if (r.condicional) { %>
+                <label class="check"><input type="checkbox" name="na_<%= r.id %>" data-no-aplica> No aplica a mi caso</label>
+              <% } %>
+            </div>
+          </li>
+        <% }) %>
+      </ol>
+    </div>
+
+    <div class="alerta-requisitos" id="resumen-requisitos">
+      <strong>Faltan requisitos</strong>
+      <p>Puede enviar el trámite igualmente, pero quedará marcado como incompleto hasta que los presente.</p>
+      <ul data-lista-faltantes></ul>
+    </div>
+    <div class="flash flash-ok oculto" id="requisitos-completos">Todos los requisitos están completos.</div>
+  <% } %>
+
+  <button type="submit">Enviar trámite</button>
+</form>
+<script src="/js/requisitos.js"></script>
 <%- include('../partials/footer') %>

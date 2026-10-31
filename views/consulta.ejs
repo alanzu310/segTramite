@@ -11,7 +11,9 @@
 <% } %>
 <% if (tramite) { %>
   <div class="card">
+    <div class="muted"><%= tramite.tipo_nombre %></div>
     <h2><%= tramite.codigo %> — <%= tramite.titulo %></h2>
+    <% if (tramite.faltantes) { %><div class="alerta-requisitos"><strong>Faltan <%= tramite.faltantes %> requisito(s).</strong> El solicitante puede completarlos ingresando a su cuenta.</div><% } %>
     <div class="datos">
       <div><span class="muted">Se encuentra en</span><strong><%= tramite.departamento_nombre %></strong></div>
       <div><span class="muted">Estado</span><%- include('partials/estado', { estado: tramite.estado }) %></div>

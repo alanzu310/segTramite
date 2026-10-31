@@ -1,0 +1,46 @@
+<% var esNuevo = !u.id; %>
+<%- include('../partials/header', { titulo: esNuevo ? 'Nuevo usuario' : 'Editar usuario' }) %>
+<p><a href="/admin/usuarios">← Volver a usuarios</a></p>
+<div class="card media">
+  <h1><%= esNuevo ? 'Nuevo usuario' : 'Editar usuario' %></h1>
+  <form method="post" action="<%= esNuevo ? '/admin/usuarios' : '/admin/usuarios/' + u.id %>">
+    <div class="grid-campos">
+      <label>Nombre completo * <input name="nombre" value="<%= u.nombre || '' %>" required></label>
+      <label>Cédula <input name="cedula" value="<%= u.cedula || '' %>"></label>
+      <label>Correo electrónico * <input type="email" name="email" value="<%= u.email || '' %>" required></label>
+      <label><%= esNuevo ? 'Contraseña *' : 'Nueva contraseña (dejar vacío para no cambiarla)' %>
+        <input type="password" name="password" minlength="6" <%= esNuevo ? 'required' : '' %> autocomplete="new-password"></label>
+      <label>Rol *
+        <select name="rol" id="rol" required>
+          <% Object.keys(ROLES).forEach(function (k) { %><option value="<%= k %>" <%= u.rol === k ? 'selected' : '' %>><%= ROLES[k] %></option><% }) %>
+        </select>
+      </label>
+      <label id="campo-dependencia">Dependencia *
+        <select name="departamento_id" id="dependencia">
+          <option value="">Seleccione…</option>
+          <% dependencias.forEach(function (d) { %><option value="<%= d.id %>" <%= u.departamento_id === d.id ? 'selected' : '' %>><%= d.nombre %></option><% }) %>
+        </select>
+      </label>
+    </div>
+    <label class="check"><input type="checkbox" name="activo" value="1" <%= u.activo ? 'checked' : '' %>> Cuenta activa</label>
+    <p class="muted">Técnicos y jefes deben pertenecer a una dependencia: solo pueden actuar sobre los trámites que estén en ella.
+      El jefe además puede derivar trámites y cambiar su estado.</p>
+    <button type="submit"><%= esNuevo ? 'Crear usuario' : 'Guardar cambios' %></button>
+  </form>
+</div>
+<script>
+  // La dependencia solo aplica al personal (técnico / jefe)
+  (function () {
+    var rol = document.getElementById('rol');
+    var campo = document.getElementById('campo-dependencia');
+    var select = document.getElementById('dependencia');
+    function actualizar() {
+      var personal = rol.value === 'tecnico' || rol.value === 'jefe';
+      campo.classList.toggle('oculto', !personal);
+      select.required = personal;
+    }
+    rol.addEventListener('change', actualizar);
+    actualizar();
+  })();
+</script>
+<%- include('../partials/footer') %>

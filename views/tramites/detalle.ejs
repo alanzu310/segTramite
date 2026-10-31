@@ -1,8 +1,14 @@
 <%- include('../partials/header', { titulo: tramite.codigo }) %>
 <div class="card">
   <div class="encabezado">
-    <h1><%= tramite.codigo %> — <%= tramite.titulo %></h1>
-    <%- include('../partials/estado', { estado: tramite.estado }) %>
+    <div>
+      <div class="muted"><%= tramite.tipo_nombre %></div>
+      <h1><%= tramite.codigo %> — <%= tramite.titulo %></h1>
+    </div>
+    <div class="fila">
+      <% if (tramite.faltantes) { %><a href="#requisitos" class="badge-falta">Faltan <%= tramite.faltantes %> requisito(s)</a><% } %>
+      <%- include('../partials/estado', { estado: tramite.estado }) %>
+    </div>
   </div>
   <div class="datos">
     <div><span class="muted">Se encuentra en</span><strong><%= tramite.departamento_nombre %></strong></div>
@@ -10,11 +16,23 @@
     <div><span class="muted">Ingresado</span><%= tramite.creado_en %></div>
     <div><span class="muted">Última actualización</span><%= tramite.actualizado_en %></div>
   </div>
+  <% if (tramite.tipo_clave === 'legalizacion') { %>
+    <h3>Datos del predio</h3>
+    <div class="datos">
+      <% Object.keys(CAMPOS_LEGALIZACION).forEach(function (k) { if (tramite.datos[k]) { %>
+        <div><span class="muted"><%= CAMPOS_LEGALIZACION[k] %></span><%= tramite.datos[k] %></div>
+      <% } }) %>
+    </div>
+  <% } %>
   <% if (tramite.descripcion) { %><p class="descripcion"><%= tramite.descripcion %></p><% } %>
 </div>
 
 <div class="columnas">
   <section>
+    <% if (requisitos.length) { %>
+      <%- include('../partials/requisitos_detalle', { requisitos, tramite, puedeCompletar }) %>
+    <% } %>
+
     <% if (puedeInformar) { %>
       <div class="card">
         <h2>Agregar informe</h2>
@@ -51,7 +69,7 @@
       <div class="card">
         <h2>Derivar</h2>
         <form method="post" action="/tramites/<%= tramite.id %>/derivar">
-          <label>Departamento destino
+          <label>Dependencia destino
             <select name="departamento_id" required>
               <% departamentos.filter(function (d) { return d.id !== tramite.departamento_actual_id; }).forEach(function (d) { %>
                 <option value="<%= d.id %>"><%= d.nombre %></option>

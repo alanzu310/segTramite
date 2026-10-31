@@ -2,14 +2,14 @@
 <div class="encabezado">
   <h1>
     <% if (vista === 'mios') { %>Mis trámites
-    <% } else if (vista === 'bandeja') { %>Bandeja de <%= user.departamento_nombre %>
+    <% } else if (vista === 'bandeja') { %>Bandeja: <%= user.departamento_nombre %>
     <% } else { %>Todos los trámites<% } %>
   </h1>
   <% if (user.rol === 'usuario') { %>
     <a class="boton" href="/tramites/nuevo">+ Nuevo trámite</a>
-  <% } else { %>
+  <% } else if (user.rol !== 'admin') { %>
     <div class="tabs">
-      <a class="<%= vista === 'bandeja' ? 'activo' : '' %>" href="/tramites">Mi departamento</a>
+      <a class="<%= vista === 'bandeja' ? 'activo' : '' %>" href="/tramites">Mi dependencia</a>
       <a class="<%= vista === 'todos' ? 'activo' : '' %>" href="/tramites?ver=todos">Todos</a>
     </div>
   <% } %>
@@ -18,15 +18,16 @@
   <div class="card muted">No hay trámites para mostrar.</div>
 <% } else { %>
   <table class="tabla">
-    <thead><tr><th>Código</th><th>Título</th><% if (user.rol !== 'usuario') { %><th>Solicitante</th><% } %><th>Departamento actual</th><th>Estado</th><th>Actualizado</th></tr></thead>
+    <thead><tr><th>Código</th><th>Trámite</th><% if (user.rol !== 'usuario') { %><th>Solicitante</th><% } %><th>Se encuentra en</th><th>Estado</th><th>Requisitos</th><th>Actualizado</th></tr></thead>
     <tbody>
       <% tramites.forEach(function (t) { %>
         <tr>
           <td><a href="/tramites/<%= t.id %>"><%= t.codigo %></a></td>
-          <td><%= t.titulo %></td>
+          <td><%= t.titulo %><div class="muted"><%= t.tipo_nombre %></div></td>
           <% if (user.rol !== 'usuario') { %><td><%= t.solicitante_nombre %></td><% } %>
           <td><%= t.departamento_nombre %></td>
           <td><%- include('../partials/estado', { estado: t.estado }) %></td>
+          <td><% if (t.faltantes) { %><span class="badge-falta">Faltan <%= t.faltantes %></span><% } else { %><span class="muted">Completos</span><% } %></td>
           <td class="muted"><%= t.actualizado_en %></td>
         </tr>
       <% }) %>

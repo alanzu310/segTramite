@@ -1,0 +1,25 @@
+<%- include('../partials/header', { titulo: 'Dependencias' }) %>
+<h1>Dependencias</h1>
+<div class="columnas">
+  <table class="tabla">
+    <thead><tr><th>Dependencia</th><th>Personal activo</th><th></th></tr></thead>
+    <tbody>
+      <% dependencias.forEach(function (d) { %>
+        <tr>
+          <td><strong><%= d.nombre %></strong><% if (d.descripcion) { %><div class="muted"><%= d.descripcion %></div><% } %></td>
+          <td><%= d.personal %></td>
+          <td><a href="/admin/usuarios?dep=<%= d.id %>">Ver personal</a></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+  <div class="card">
+    <h2>Nueva dependencia</h2>
+    <form method="post" action="/admin/dependencias">
+      <label>Nombre * <input name="nombre" required></label>
+      <label>Descripción <textarea name="descripcion" rows="3"></textarea></label>
+      <button type="submit">Crear</button>
+    </form>
+  </div>
+</div>
+<%- include('../partials/footer') %>

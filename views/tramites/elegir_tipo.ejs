@@ -1,0 +1,12 @@
+<%- include('../partials/header', { titulo: 'Nuevo trámite' }) %>
+<h1>¿Qué trámite desea iniciar?</h1>
+<div class="tipos">
+  <% tipos.forEach(function (t) { %>
+    <a class="card tipo" href="/tramites/nuevo?tipo=<%= t.clave %>">
+      <h2><%= t.nombre %></h2>
+      <p class="muted"><%= t.descripcion %></p>
+      <% if (t.n_requisitos) { %><span class="etiqueta"><%= t.n_requisitos %> requisitos</span><% } %>
+    </a>
+  <% }) %>
+</div>
+<%- include('../partials/footer') %>
